@@ -2,28 +2,29 @@ import time
 import cv2
 import numpy as np
 from threading import Thread, Event
-from Timer import Timer
+from Timer import Timer, TimedEvents
 
 def main():
     previousTime = time.time()
     startTime = previousTime
+    
+    eventHandler = TimedEvents()
+    updateFrameEvent = eventHandler.AddEvent(5)
+    stopEvent = eventHandler.AddEvent(5000)
 
-    showWindowTimer = Timer(5)
-    showWindowTimer.start()
-    terminateTimer = Timer(5000)
-    terminateTimer.start()
+    eventHandler.start()
 
     while(True):
         now = time.time()
     
         othervalue = now - startTime
-        if (showWindowTimer.isFlagged()):
+        if (updateFrameEvent.IsFlagged()):
             UpdateWindow(othervalue)
 
-        if(terminateTimer.isFlagged()):
+        if(stopEvent.IsFlagged()):
             print("Stopping program")
-            showWindowTimer.stop()
-            terminateTimer.stop()
+            eventHandler.stop()
+            
 
 def UpdateWindow(otherval):
 
